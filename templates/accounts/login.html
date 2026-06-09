@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static i18n_tags %}
+{% block title %}{{ T|tr:"auth.login_btn" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block auth_content %}
+<div class="auth-wrap">
+  <div class="auth-shell">
+    <div class="auth-side">
+      <div class="auth-brand"><img src="{% static 'img/logo.svg' %}" alt="logo"> {{ SITE_NAME }}</div>
+      <h1>{{ T|tr:"auth.hero" }}</h1>
+      <p>{{ T|tr:"auth.hero_sub" }}</p>
+      <div class="feats">
+        <div class="feat"><span>🏆</span> {{ T|tr:"home.btn.games" }}</div>
+        <div class="feat"><span>🪙</span> {{ T|tr:"common.coin" }}</div>
+        <div class="feat"><span>⭐</span> {{ T|tr:"common.star" }}</div>
+        <div class="feat"><span>🎖️</span> {{ T|tr:"profile.achievements" }}</div>
+      </div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <a class="on" href="{% url 'accounts:login' %}">{{ T|tr:"auth.login_btn" }}</a>
+        <a href="{% url 'accounts:register' %}">{{ T|tr:"auth.register_btn" }}</a>
+      </div>
+      {% if form.non_field_errors %}<div class="auth-err">{{ form.non_field_errors.0 }}</div>{% endif %}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="auth-field">
+          <label>{{ T|tr:"auth.username" }}</label>{{ form.username }}
+          {% if form.username.errors %}<small class="text-danger fw-bold">{{ form.username.errors.0 }}</small>{% endif %}
+        </div>
+        <div class="auth-field">
+          <label>{{ T|tr:"auth.password" }}</label>{{ form.password }}
+          {% if form.password.errors %}<small class="text-danger fw-bold">{{ form.password.errors.0 }}</small>{% endif %}
+        </div>
+        <button class="btn-ms w-100" style="padding:14px;font-size:18px;justify-content:center">{{ T|tr:"auth.login_btn" }}</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

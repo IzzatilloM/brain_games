@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_parental %}active{% endblock %}
+{% block title %}{{ T|tr:"nav.parent" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="ms-page-head"><h1>🛡️ {{ T|tr:"nav.parent" }}</h1></div>
+<div class="parent-card mb-3">
+  <span class="pcard-ic">{% if pc.parent_type == 'ota' %}👨{% else %}👩{% endif %}</span>
+  <div>
+    <b>{{ pc.parent_first_name }} {{ pc.parent_last_name }}</b>
+    <small class="d-block text-muted">{{ pc.get_parent_type_display }} · {{ pc.parent_workplace }} · {{ pc.parent_email }}</small>
+    <small class="d-block text-muted">{{ T|tr:"pc.child" }}: {{ pc.child_first_name }} {{ pc.child_last_name }}</small>
+  </div>
+  <span class="badge-on ms-auto">✅ {{ T|tr:"pc.enabled" }}</span>
+</div>
+<p class="text-muted fw-bold">{{ T|tr:"pc.sub" }}</p>
+
+<form method="post" action="{% url 'accounts:parental_save' %}" style="max-width:680px">
+  {% csrf_token %}
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">🔑 {{ T|tr:"pc.pin" }}</label>{{ form.pin }}
+    </div>
+    <div class="col-md-6 d-flex align-items-end">
+      <div class="form-check form-switch">
+        {{ form.is_blocked }}
+        <label class="form-check-label fw-bold" for="{{ form.is_blocked.id_for_label }}">🚫 {{ T|tr:"pc.block" }}</label>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">⏱️ {{ T|tr:"pc.daily" }}</label>{{ form.daily_limit_minutes }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">🎯 {{ T|tr:"pc.weekly" }}</label>{{ form.weekly_goal_minutes }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">🌙 {{ T|tr:"pc.bed_start" }}</label>{{ form.bedtime_start }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">☀️ {{ T|tr:"pc.bed_end" }}</label>{{ form.bedtime_end }}
+    </div>
+  </div>
+
+  <h3 style="font-size:18px;margin:22px 0 10px">📂 {{ T|tr:"pc.cats" }}</h3>
+  <div class="row g-2">
+    {% for f in form %}{% if 'allow_' in f.name %}
+    <div class="col-md-6"><div class="form-check form-switch">{{ f }}<label class="form-check-label fw-bold" for="{{ f.id_for_label }}">{{ f.label }}</label></div></div>
+    {% endif %}{% endfor %}
+  </div>
+
+  <button class="btn-ms mt-4">💾 {{ T|tr:"pc.save" }}</button>
+</form>
+
+{% if show_modal %}
+<div class="ms-overlay" id="enabledModal">
+  <div class="ms-modal">
+    <div class="big">🎉</div>
+    <h2>{{ T|tr:"pc.modal_title" }}</h2>
+    <p class="text-muted fw-bold">{{ T|tr:"pc.modal_sub" }}</p>
+    <button class="btn-ms" onclick="document.getElementById('enabledModal').remove()">{{ T|tr:"pc.ok" }} ✅</button>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

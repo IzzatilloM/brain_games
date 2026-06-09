@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_multi %}active{% endblock %}
+{% block title %}{{ T|tr:"nav.multiplayer" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="ms-page-head"><h1>🌐 {{ T|tr:"nav.multiplayer" }}</h1></div>
+<div class="text-center" style="padding:40px 0">
+  <div style="font-size:72px">🤝</div>
+  <h2>{{ T|tr:"mp.compete" }}</h2>
+  <p class="text-muted fw-bold" style="max-width:480px;margin:0 auto">{{ T|tr:"mp.desc" }}</p>
+  <a class="btn-ms mt-3" href="{% url 'games:list' %}"><i class="bi bi-controller"></i> {{ T|tr:"mp.try" }}</a>
+</div>
+{% endblock %}

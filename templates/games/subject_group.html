@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_subjects %}active{% endblock %}
+{% block title %}{{ subject.name }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="ms-page-head mb-4">
+  <a class="back" href="{% url 'games:subjects' %}"><i class="bi bi-arrow-left"></i></a>
+  <h1>{{ subject.icon }} {{ subject.name }}</h1>
+</div>
+
+<div class="ms-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+  {% for g in games %}
+  <a class="ms-game-card" href="{% url 'games:play' g.slug %}">
+    <div class="ms-tile" style="--c:{{ subject.color }}">{{ g.icon }}</div>
+    <h3>{{ g.name }}</h3>
+    <div class="meta">{{ T|tr:"group.brain" }}</div>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

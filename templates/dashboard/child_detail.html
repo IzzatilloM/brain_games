@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ child.full_name }} — nazorat — {{ SITE_NAME }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}"><link rel="stylesheet" href="{% static 'css/auth.css' %}">{% endblock %}
+
+{% block content %}
+<section class="dash">
+  <div class="container">
+    <a href="{% url 'dashboard:home' %}" class="text-muted" style="display:inline-block;margin-bottom:.8rem">← Kabinetga qaytish</a>
+
+    <!-- Sarlavha -->
+    <div class="hero-card" style="margin-bottom:1.6rem">
+      <span class="face-xl">{{ child.avatar }}</span>
+      <div class="greet">Farzand profili</div>
+      <h1>{{ child.full_name|default:child.username }}</h1>
+      <div class="flex gap-sm mt-1" style="flex-wrap:wrap">
+        <span class="pill">{{ child.level }}-daraja</span>
+        <span class="pill">🪙 {{ child.coins }}</span>
+        <span class="pill">🔥 {{ child.streak_days }} kun</span>
+        <span class="pill">🎯 {{ accuracy }}% aniqlik</span>
+        <span class="pill">📊 o'rtacha daraja {{ avg_difficulty }}</span>
+        <span class="pill">👤 login: {{ child.username }}</span>
+      </div>
+    </div>
+
+    <div class="control-grid">
+      <!-- Chap: nazorat sozlamalari -->
+      <div class="panel glass">
+        <div class="panel__head"><h3>⚙️ Nazorat sozlamalari</h3></div>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="field">
+              <label for="{{ form.daily_time_limit.id_for_label }}">Kunlik limit (daqiqa)</label>
+              {{ form.daily_time_limit }}
+            </div>
+            <div class="field">
+              <label for="{{ form.weekly_goal_minutes.id_for_label }}">Haftalik maqsad (daqiqa)</label>
+              {{ form.weekly_goal_minutes }}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="{{ form.bedtime_start.id_for_label }}">Tunlik blok (dan)</label>
+              {{ form.bedtime_start }}
+            </div>
+            <div class="field">
+              <label for="{{ form.bedtime_end.id_for_label }}">Tunlik blok (gacha)</label>
+              {{ form.bedtime_end }}
+            </div>
+          </div>
+          <div class="field">
+            <label for="{{ form.max_difficulty.id_for_label }}">Maksimal qiyinlik darajasi (1–12)</label>
+            {{ form.max_difficulty }}
+          </div>
+
+          <h4 style="margin:1.2rem 0 .4rem;font-size:1rem">Ruxsat etilgan o'yinlar</h4>
+          <div class="switch-row"><span>🧮 Mental arifmetika</span><label class="switch">{{ form.allow_mental }}<span class="track"></span></label></div>
+          <div class="switch-row"><span>🔢 Abakus (soroban)</span><label class="switch">{{ form.allow_abacus }}<span class="track"></span></label></div>
+          <div class="switch-row"><span>📖 Tez o'qish</span><label class="switch">{{ form.allow_reading }}<span class="track"></span></label></div>
+          <div class="switch-row"><span>🧠 Xotira o'yini</span><label class="switch">{{ form.allow_memory }}<span class="track"></span></label></div>
+
+          <div class="switch-row" style="margin-top:.6rem">
+            <span style="color:var(--red);font-weight:700">🔒 Hisobni bloklash</span>
+            <label class="switch">{{ form.is_blocked }}<span class="track"></span></label>
+          </div>
+
+          <button type="submit" class="btn btn--block mt-3">Sozlamalarni saqlash ✅</button>
+        </form>
+      </div>
+
+      <!-- O'ng: hisobotlar -->
+      <div style="display:grid;gap:1.3rem">
+        <div class="panel glass">
+          <div class="panel__head"><h3>📈 Haftalik faollik</h3><span class="pill">{{ today_minutes }} daq bugun</span></div>
+          <div class="chart" id="weekChart" data-labels="{{ chart_labels|join:',' }}" data-values="{{ chart_minutes|join:',' }}"></div>
+        </div>
+
+        <div class="panel glass">
+          <div class="panel__head"><h3>O'yinlar bo'yicha</h3></div>
+          {% for p in progress_list %}
+          <div class="prog-row">
+            <div class="g-ico" style="background:linear-gradient(140deg,{{ p.game.color }},{{ p.game.color_2 }})">{{ p.game.icon }}</div>
+            <div class="g-body">
+              <div class="flex justify-between"><div class="g-name">{{ p.game.title }}</div><span class="lvl-tag">{{ p.difficulty }}-daraja</span></div>
+              <div class="g-sub">{{ p.total_sessions }} sessiya · {{ p.accuracy }}% · {{ p.minutes }} daq</div>
+            </div>
+          </div>
+          {% empty %}
+          <p class="text-muted" style="text-align:center;padding:1rem">Hali o'yin yo'q.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sessiyalar jadvali -->
+    <div class="panel glass mt-3">
+      <div class="panel__head"><h3>🗂️ So'nggi sessiyalar</h3></div>
+      {% if sessions %}
+      <div style="overflow-x:auto">
+        <table class="report-table">
+          <thead><tr><th>O'yin</th><th>Sana</th><th>Ball</th><th>Aniqlik</th><th>Savollar</th><th>Daraja</th><th>Vaqt</th></tr></thead>
+          <tbody>
+          {% for s in sessions %}
+          <tr>
+            <td>{{ s.game.icon }} {{ s.game.short_title|default:s.game.title }}</td>
+            <td class="text-muted">{{ s.created_at|date:"d-M H:i" }}</td>
+            <td><b>{{ s.score }}</b></td>
+            <td class="{% if s.accuracy >= 80 %}acc-good{% elif s.accuracy >= 50 %}acc-mid{% else %}acc-low{% endif %}">{{ s.accuracy }}%</td>
+            <td>{{ s.questions_correct }}/{{ s.questions_total }}</td>
+            <td>{{ s.difficulty_start }}→{{ s.difficulty_end }}</td>
+            <td class="text-muted">{{ s.duration_seconds }}s</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-muted" style="text-align:center;padding:1.5rem">Bu farzand hali o'ynamagan.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/dashboard.js' %}"></script>{% endblock %}

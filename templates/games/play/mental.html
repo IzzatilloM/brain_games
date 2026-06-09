@@ -1,0 +1,20 @@
+{% extends "games/play/_base_game.html" %}
+{% load static %}
+
+{% block rules %}
+<li>🧮 <b>Maqsad:</b> misolni xayolan yeching va javobni yozing</li>
+<li>📈 <b>Adaptiv:</b> 3 ta ketma-ket to'g'ri javobdan keyin sonlar kattalashadi</li>
+<li>💡 <b>Yordam:</b> qiynalsangiz, tizim bosqichma-bosqich ko'rsatma beradi</li>
+<li>❤️ <b>Jonlar:</b> 3 ta xato — o'yin tugaydi</li>
+{% endblock %}
+
+{% block play_area %}
+<div class="prompt-sub" id="qLabel">Yeching:</div>
+<div class="question" id="qPrompt">—</div>
+<div class="answer-row">
+  <input type="text" inputmode="numeric" class="answer-input" id="answerInput" autocomplete="off" placeholder="?">
+  <button class="btn" id="submitAnswer">→</button>
+</div>
+{% endblock %}
+
+{% block game_js %}<script src="{% static 'js/games/mental.js' %}"></script>{% endblock %}

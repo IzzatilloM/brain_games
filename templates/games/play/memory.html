@@ -1,0 +1,16 @@
+{% extends "games/play/_base_game.html" %}
+{% load static %}
+
+{% block rules %}
+<li>🧠 <b>Maqsad:</b> yonib o'tgan kataklar ketma-ketligini takrorlang</li>
+<li>👀 <b>Ko'nikma:</b> qisqa muddatli xotira va diqqat</li>
+<li>📈 <b>Adaptiv:</b> daraja oshgani sari ketma-ketlik uzayadi</li>
+<li>🔁 <b>Takrorlang:</b> kataklarni to'g'ri tartibda bosing</li>
+{% endblock %}
+
+{% block play_area %}
+<div class="prompt-sub" id="memoLabel">Diqqat bilan kuzating...</div>
+<div id="memoBox" class="memo-grid"></div>
+{% endblock %}
+
+{% block game_js %}<script src="{% static 'js/games/memory.js' %}"></script>{% endblock %}

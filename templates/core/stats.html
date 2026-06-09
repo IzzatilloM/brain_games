@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_stats %}active{% endblock %}
+{% block title %}{{ T|tr:"stats.title" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="ms-page-head"><h1>📊 {{ T|tr:"stats.title" }}</h1></div>
+
+<div class="ms-stats">
+  <div class="ms-stat"><div class="v">{{ totals.games }}</div><div class="l">🎮 {{ T|tr:"stats.total_games" }}</div></div>
+  <div class="ms-stat"><div class="v">{{ totals.best }}</div><div class="l">🏅 {{ T|tr:"stats.best" }}</div></div>
+  <div class="ms-stat"><div class="v">{{ totals.xp }}</div><div class="l">⚡ XP</div></div>
+  <div class="ms-stat"><div class="v">{{ totals.minutes }}</div><div class="l">⏱️ {{ T|tr:"stats.minutes" }}</div></div>
+</div>
+
+<div class="ms-stat" style="background:var(--card);border:1px solid var(--line);padding:22px">
+  <h3 style="font-size:18px;text-align:left">📈 {{ T|tr:"stats.weekly" }}</h3>
+  <div style="height:260px;position:relative"><canvas id="weeklyChart"></canvas></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  var weekly = {{ weekly_json|safe }};
+  var dark = document.documentElement.getAttribute('data-theme')==='dark';
+  new Chart(document.getElementById('weeklyChart'), {
+    type:'bar',
+    data:{ labels:weekly.map(d=>d.label),
+      datasets:[{ data:weekly.map(d=>d.xp), backgroundColor:'#ed1c24', borderRadius:8, maxBarThickness:38 }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{ x:{grid:{display:false},ticks:{color:dark?'#9aa0c0':'#8b8ba3'}},
+               y:{beginAtZero:true,ticks:{color:dark?'#9aa0c0':'#8b8ba3'}} } }
+  });
+</script>
+{% endblock %}

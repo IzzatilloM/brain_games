@@ -1,0 +1,20 @@
+{% extends "games/play/_base_game.html" %}
+{% load static %}
+
+{% block rules %}
+<li>🔢 <b>Maqsad:</b> abakusda (soroban) ko'rsatilgan sonni o'qing</li>
+<li>👀 <b>Ko'nikma:</b> ko'rish xotirasi va tez idrok</li>
+<li>📈 <b>Adaptiv:</b> darajada xonalar soni ortib boradi</li>
+<li>💡 <b>Yordam:</b> har bir ustun qiymati ko'rsatiladi</li>
+{% endblock %}
+
+{% block play_area %}
+<div class="prompt-sub">Abakusdagi sonni yozing:</div>
+<div id="abacusBox" class="abacus"></div>
+<div class="answer-row">
+  <input type="text" inputmode="numeric" class="answer-input" id="answerInput" autocomplete="off" placeholder="?">
+  <button class="btn" id="submitAnswer">→</button>
+</div>
+{% endblock %}
+
+{% block game_js %}<script src="{% static 'js/games/abacus.js' %}"></script>{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_home %}active{% endblock %}
+{% block title %}{{ T|tr:"nav.home" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="row g-4 align-items-stretch mb-4">
+  <div class="col-lg-8">
+    <div class="ms-hero h-100 d-flex flex-column justify-content-center">
+      <div class="eyebrow" style="color:rgba(255,255,255,.85)">👋 {{ T|tr:"home.greeting" }}</div>
+      <h1>{{ user.display_name }}!</h1>
+      <p>{{ T|tr:"home.welcome_sub" }}</p>
+      <div class="mt-3 d-flex gap-2 flex-wrap">
+        <a class="btn-glass" href="{% url 'games:list' %}"><i class="bi bi-controller"></i> {{ T|tr:"nav.games" }}</a>
+        <a class="btn-glass" href="{% url 'games:play' 'forsaj' %}"><i class="bi bi-rocket-takeoff"></i> Forsaj</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="ms-stat h-100 d-flex flex-column align-items-center justify-content-center gap-2" style="background:var(--card);border:1px solid var(--line)">
+      <div class="ms-ring" style="--p:{{ user.xp_in_level }}"><div class="inner">{{ user.level }}</div></div>
+      <div class="text-center">
+        <h3 style="margin:0">{{ user.level }}-{{ T|tr:"common.level" }}</h3>
+        <div class="text-muted fw-bold">{{ T|tr:"home.next_level" }} {{ user.xp_to_next }} XP</div>
+        <div class="fw-bold mt-1">🔥 {{ user.streak_days }} {{ T|tr:"home.day_streak" }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ms-stats">
+  <div class="ms-stat"><div class="v">{{ user.xp }}</div><div class="l">⚡ XP</div></div>
+  <div class="ms-stat"><div class="v">{{ user.coins }}</div><div class="l">🪙 {{ T|tr:"common.coin" }}</div></div>
+  <div class="ms-stat"><div class="v">{{ user.stars }}</div><div class="l">⭐ {{ T|tr:"common.star" }}</div></div>
+  <div class="ms-stat"><div class="v">{{ total_games }}</div><div class="l">🎮 {{ T|tr:"common.games" }}</div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="ms-home-menu">
+      <a class="ms-home-btn" style="--c:var(--red)" href="{% url 'games:list' %}"><i class="bi bi-controller"></i> {{ T|tr:"nav.games" }}</a>
+      <a class="ms-home-btn" style="--c:var(--green)" href="{% url 'games:subjects' %}"><i class="bi bi-mortarboard-fill"></i> {{ T|tr:"nav.subjects" }}</a>
+      <a class="ms-home-btn" style="--c:var(--blue)" href="{% url 'core:homework' %}"><i class="bi bi-clipboard-check"></i> {{ T|tr:"home.btn.homework" }}</a>
+      <a class="ms-home-btn" style="--c:var(--green)" href="{% url 'core:rating' %}"><i class="bi bi-trophy"></i> {{ T|tr:"nav.rating" }}</a>
+      <a class="ms-home-btn" style="--c:var(--orange)" href="{% url 'core:multiplayer' %}"><i class="bi bi-globe-americas"></i> {{ T|tr:"nav.multiplayer" }}</a>
+      <a class="ms-home-btn" style="--c:var(--purple)" href="{% url 'accounts:profile' %}"><i class="bi bi-person"></i> {{ T|tr:"nav.profile" }}</a>
+      <a class="ms-home-btn" style="--c:var(--teal)" href="{% url 'core:stats' %}"><i class="bi bi-graph-up"></i> {{ T|tr:"nav.stats" }}</a>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="ms-page-head mb-3"><h1 style="font-size:24px">🎮 {{ T|tr:"home.categories" }}</h1></div>
+    <div class="ms-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
+      {% for cat in categories %}
+      <a class="ms-cat-card" href="{% url 'games:group' cat.slug %}">
+        <div class="ms-cat-thumb" style="--g:{{ cat.grad }}"><span class="em">{{ cat.icon }}</span></div>
+        <h3>{{ cat.name }}</h3>
+        <div class="meta">{{ cat.games|length }} ta o'yin</div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

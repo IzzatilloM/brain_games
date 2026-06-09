@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ota-ona kabineti — {{ SITE_NAME }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">{% endblock %}
+
+{% block content %}
+<section class="dash">
+  <div class="container">
+    <div class="flex justify-between items-center mb-3" style="flex-wrap:wrap;gap:1rem">
+      <div>
+        <span class="eyebrow">Ota-ona nazorati</span>
+        <h1 style="font-size:1.9rem">Salom, {{ user.full_name|default:user.username }} 👋</h1>
+        <p class="text-muted">Farzandlaringizning o'sishini kuzating va nazorat qiling.</p>
+      </div>
+      <a href="{% url 'dashboard:add_child' %}" class="btn">＋ Farzand qo'shish</a>
+    </div>
+
+    {% if rows %}
+    <div class="kids-grid">
+      {% for r in rows %}
+      <div class="kid-card glass {% if r.controls.is_blocked %}blocked{% endif %}">
+        <div class="top">
+          <div class="face">{{ r.child.avatar }}</div>
+          <div>
+            <div class="nm">{{ r.child.full_name|default:r.child.username }}</div>
+            <div class="text-muted" style="font-size:.85rem">{{ r.child.level }}-daraja · 🪙 {{ r.child.coins }} · 🔥 {{ r.child.streak_days }}</div>
+          </div>
+        </div>
+        <div class="meta-row">
+          <div class="mini"><div class="v">{{ r.today_minutes }}</div><div class="k">bugun (daq)</div></div>
+          <div class="mini"><div class="v">{{ r.accuracy }}%</div><div class="k">aniqlik</div></div>
+          <div class="mini"><div class="v">{{ r.plays }}</div><div class="k">o'yin</div></div>
+        </div>
+        {% if r.controls %}
+        <div class="text-muted" style="font-size:.82rem;margin-bottom:.9rem">
+          ⏰ Kunlik limit: {{ r.controls.daily_time_limit }} daq · Maks. daraja: {{ r.controls.max_difficulty }}
+        </div>
+        {% endif %}
+        <a href="{% url 'dashboard:child_detail' r.child.id %}" class="btn btn--ghost btn--block btn--sm">Boshqarish va hisobot →</a>
+      </div>
+      {% endfor %}
+
+      <a href="{% url 'dashboard:add_child' %}" class="kid-card add-kid glass">
+        <div><div class="plus">＋</div><b>Yangi farzand qo'shish</b></div>
+      </a>
+    </div>
+    {% else %}
+    <div class="panel glass empty">
+      <div class="e">👨‍👩‍👧</div>
+      <h3>Hali farzand qo'shilmagan</h3>
+      <p class="text-muted mb-2">Boshlash uchun birinchi farzandingiz uchun hisob yarating.</p>
+      <a href="{% url 'dashboard:add_child' %}" class="btn">＋ Birinchi farzandni qo'shish</a>
+    </div>
+    {% endif %}
+
+    <!-- Maslahatlar -->
+    <div class="grid mt-4" style="grid-template-columns:repeat(3,1fr)">
+      <div class="card"><div style="font-size:1.8rem">⏰</div><h3 style="font-size:1.05rem;margin:.4rem 0">Vaqtni cheklang</h3><p class="text-muted" style="font-size:.88rem">Har bir farzand uchun kunlik o'yin vaqtini belgilang.</p></div>
+      <div class="card"><div style="font-size:1.8rem">🎚️</div><h3 style="font-size:1.05rem;margin:.4rem 0">Qiyinlikni sozlang</h3><p class="text-muted" style="font-size:.88rem">Bola yoshiga mos maksimal darajani tanlang.</p></div>
+      <div class="card"><div style="font-size:1.8rem">📊</div><h3 style="font-size:1.05rem;margin:.4rem 0">Hisobotni kuzating</h3><p class="text-muted" style="font-size:.88rem">Har bir o'yin bo'yicha natijalarni ko'ring.</p></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

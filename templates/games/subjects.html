@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_subjects %}active{% endblock %}
+{% block title %}{{ T|tr:"subjects.title" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <div class="ms-page-head mb-0"><h1>📚 {{ T|tr:"subjects.title" }}</h1></div>
+  <a class="btn-ms" href="{% url 'games:list' %}"><i class="bi bi-controller"></i> {{ T|tr:"nav.games" }}</a>
+</div>
+<p class="text-muted fw-bold">{{ T|tr:"subjects.sub" }}</p>
+
+<div class="ms-grid">
+  {% for s in subjects %}
+  <a class="ms-cat-card" href="{% url 'games:subject_group' s.slug %}">
+    <div class="ms-cat-thumb" style="--g:linear-gradient(135deg,{{ s.color }}cc,{{ s.color }})"><span class="em">{{ s.icon }}</span></div>
+    <h3>{{ s.name }}</h3>
+    <div class="meta">{{ s.count }} {{ T|tr:"subjects.test" }}</div>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

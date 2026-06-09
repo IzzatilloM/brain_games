@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_homework %}active{% endblock %}
+{% block title %}{{ T|tr:"home.btn.homework" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="ms-page-head"><h1>📋 {{ T|tr:"home.btn.homework" }}</h1></div>
+<div class="text-center" style="padding:40px 0">
+  <div style="font-size:72px">📚</div>
+  <h2>{{ T|tr:"hw.head" }}</h2>
+  <p class="text-muted fw-bold" style="max-width:480px;margin:0 auto">{{ T|tr:"hw.desc" }}</p>
+  <a class="btn-ms mt-3" href="{% url 'games:group' 'matematika' %}"><i class="bi bi-calculator"></i> {{ T|tr:"hw.math" }}</a>
+</div>
+{% endblock %}

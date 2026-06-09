@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Platforma haqida — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="ms-page-head"><h1>📄 Platforma haqida</h1></div>
+<div style="max-width:760px">
+  <p class="fw-bold">{{ SITE_NAME }} — 6–14 yoshdagi bolalar uchun mental arifmetika, xotira, tez o'qish,
+    diqqat va matematika bo'yicha interaktiv o'yinlar va testlar platformasi.</p>
+  <h3 style="font-size:18px;margin-top:20px">Foydalanuvchi shartnomasi</h3>
+  <p class="text-muted">Platformadan foydalanish bepul. Foydalanuvchi o'z hisobi xavfsizligi uchun javobgar.
+    Ma'lumotlar faqat ta'limiy maqsadda saqlanadi.</p>
+  <h3 style="font-size:18px;margin-top:20px">Oferta shartnomasi</h3>
+  <p class="text-muted">Pulli xizmatlar joriy etilganda, ushbu shartnoma yangilanadi.</p>
+  <a class="btn-ms mt-2" href="{% url 'core:home' %}">Bosh sahifaga</a>
+</div>
+{% endblock %}

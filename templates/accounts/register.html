@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static i18n_tags %}
+{% block title %}{{ T|tr:"auth.register_btn" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block auth_content %}
+<div class="auth-wrap">
+  <div class="auth-shell">
+    <div class="auth-side">
+      <div class="auth-brand"><img src="{% static 'img/logo.svg' %}" alt="logo"> {{ SITE_NAME }}</div>
+      <h1>Sayohatni boshlaymiz!</h1>
+      <p>Login tanla, avatar va yoshingni belgila — va o'yinlar olamiga kir!</p>
+      <div class="feats">
+        <div class="feat"><span>🎮</span> 16+ o'yin</div>
+        <div class="feat"><span>📚</span> Testlar</div>
+        <div class="feat"><span>🔥</span> Streak</div>
+        <div class="feat"><span>📊</span> Statistika</div>
+      </div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <a href="{% url 'accounts:login' %}">{{ T|tr:"auth.login_btn" }}</a>
+        <a class="on" href="{% url 'accounts:register' %}">{{ T|tr:"auth.register_btn" }}</a>
+      </div>
+      <form method="post" novalidate id="regForm">
+        {% csrf_token %}
+        <div class="auth-field"><label>{{ T|tr:"auth.name" }}</label>{{ form.full_name }}</div>
+        <div class="auth-field">
+          <label>{{ T|tr:"auth.username" }}</label>{{ form.username }}
+          {% if form.username.errors %}<small class="text-danger fw-bold">{{ form.username.errors.0 }}</small>{% endif %}
+        </div>
+        <div class="auth-field">
+          <label>{{ T|tr:"auth.password" }}</label>{{ form.password }}
+          {% if form.password.errors %}<small class="text-danger fw-bold">{{ form.password.errors.0 }}</small>{% endif %}
+        </div>
+        <div class="auth-field">
+          <label>{{ T|tr:"auth.your_age" }}</label>
+          <div class="chooser" id="ageChooser">
+            {% for value, label in age_groups %}
+            <div class="chip age" data-val="{{ value }}">{{ label }}</div>
+            {% endfor %}
+          </div>
+          {{ form.age_group }}
+        </div>
+        <div class="auth-field">
+          <label>{{ T|tr:"auth.pick_avatar" }}</label>
+          <div class="chooser" id="avatarChooser">
+            {% for a in avatars %}<div class="chip av" data-val="{{ a }}">{{ a }}</div>{% endfor %}
+          </div>
+          {{ form.avatar }}
+        </div>
+        <button class="btn-ms w-100" style="padding:14px;font-size:18px;justify-content:center">{{ T|tr:"auth.register_btn" }}</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  (function(){
+    function bind(chooserId, inputName, initial){
+      var chooser=document.getElementById(chooserId);
+      var input=document.querySelector('[name="'+inputName+'"]');
+      var chips=chooser.querySelectorAll('.chip');
+      function select(chip){ chips.forEach(c=>c.classList.remove('on')); chip.classList.add('on'); input.value=chip.dataset.val; }
+      chips.forEach(c=>c.addEventListener('click',()=>select(c)));
+      var pre=Array.from(chips).find(c=>c.dataset.val===(input.value||initial))||chips[0];
+      if(pre) select(pre);
+    }
+    bind('ageChooser','age_group','9-11');
+    bind('avatarChooser','avatar','');
+  })();
+</script>
+{% endblock %}

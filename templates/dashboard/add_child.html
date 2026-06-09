@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Farzand qo'shish — {{ SITE_NAME }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}"><link rel="stylesheet" href="{% static 'css/auth.css' %}">{% endblock %}
+
+{% block content %}
+<section class="dash">
+  <div class="container" style="max-width:560px">
+    <a href="{% url 'dashboard:home' %}" class="text-muted" style="display:inline-block;margin-bottom:.8rem">← Kabinetga qaytish</a>
+    <h1 style="font-size:1.8rem;margin-bottom:.3rem">Yangi farzand qo'shish</h1>
+    <p class="text-muted mb-3">Farzandingiz uchun alohida hisob yarating. U shu login va parol bilan kiradi.</p>
+
+    <div class="panel glass">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="field">
+          <label for="{{ form.full_name.id_for_label }}">Farzand ismi</label>
+          {{ form.full_name }}
+          {% if form.full_name.errors %}<ul class="errorlist"><li>{{ form.full_name.errors.0 }}</li></ul>{% endif %}
+        </div>
+
+        <div class="field">
+          <label>Avatar tanlang</label>
+          <div style="display:flex;flex-wrap:wrap;gap:.5rem">
+            {% for value, label in form.avatar.field.choices %}
+            <label style="cursor:pointer">
+              <input type="radio" name="avatar" value="{{ value }}" {% if forloop.first %}checked{% endif %} class="ava-radio" style="display:none">
+              <span class="memo-cell {% if forloop.first %}picked{% endif %}" style="width:52px;height:52px">{{ value }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="{{ form.username.id_for_label }}">Login</label>
+            {{ form.username }}
+            {% if form.username.errors %}<ul class="errorlist"><li>{{ form.username.errors.0 }}</li></ul>{% endif %}
+          </div>
+          <div class="field">
+            <label for="{{ form.password.id_for_label }}">Parol</label>
+            {{ form.password }}
+            {% if form.password.errors %}<ul class="errorlist"><li>{{ form.password.errors.0 }}</li></ul>{% endif %}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="{{ form.birth_date.id_for_label }}">Tug'ilgan sana</label>
+            {{ form.birth_date }}
+          </div>
+          <div class="field">
+            <label for="{{ form.grade.id_for_label }}">Sinf</label>
+            {{ form.grade }}
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn--block btn--lg mt-2">Farzandni qo'shish 🎉</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+document.querySelectorAll('.ava-radio').forEach(r => r.addEventListener('change', () => {
+  document.querySelectorAll('.ava-radio').forEach(x => x.nextElementSibling.classList.remove('picked'));
+  r.nextElementSibling.classList.add('picked');
+}));
+</script>
+{% endblock %}

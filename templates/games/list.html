@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_games %}active{% endblock %}
+{% block title %}{{ T|tr:"nav.games" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <div class="ms-page-head mb-0"><h1>🎮 {{ T|tr:"nav.games" }}</h1></div>
+  <a class="btn-ms" href="{% url 'core:multiplayer' %}"><i class="bi bi-globe-americas"></i> {{ T|tr:"nav.multiplayer" }}</a>
+</div>
+
+<div class="ms-grid">
+  {% for cat in categories %}
+  <a class="ms-cat-card {% if not cat.allowed %}locked{% endif %}" href="{% url 'games:group' cat.slug %}">
+    <div class="ms-cat-thumb" style="--g:{{ cat.grad }}"><span class="em">{{ cat.icon }}</span></div>
+    <h3>{{ cat.name }}</h3>
+    <div class="meta">{% if cat.allowed %}{{ cat.count }} {{ T|tr:"common.games" }}{% else %}🔒 {{ T|tr:"games.locked" }}{% endif %}</div>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

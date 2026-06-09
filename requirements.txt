@@ -1,0 +1,5 @@
+# BrainGames — ishlab chiqarish bog'liqliklari (PythonAnywhere)
+# O'rnatish:  pip install -r requirements.txt
+Django==5.1.15
+whitenoise==6.12.0
+tzdata==2026.2

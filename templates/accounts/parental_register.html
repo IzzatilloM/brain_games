@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_parental %}active{% endblock %}
+{% block title %}{{ T|tr:"nav.parent" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="ms-page-head"><h1>🛡️ {{ T|tr:"preg.title" }}</h1></div>
+<p class="text-muted fw-bold">{{ T|tr:"preg.sub" }}</p>
+
+<form method="post" style="max-width:680px">
+  {% csrf_token %}
+  <div class="parent-type mb-3">
+    <label class="form-label d-block">{{ T|tr:"preg.who" }}</label>
+    <div class="chooser">
+      {% for radio in form.parent_type %}
+      <label class="chip ptype">{{ radio.tag }} <span>{% if radio.choice_label == 'Ota' %}👨 {{ T|tr:"preg.father" }}{% else %}👩 {{ T|tr:"preg.mother" }}{% endif %}</span></label>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6"><label class="form-label">{{ T|tr:"preg.fname" }}</label>{{ form.parent_first_name }}</div>
+    <div class="col-md-6"><label class="form-label">{{ T|tr:"preg.lname" }}</label>{{ form.parent_last_name }}</div>
+    <div class="col-md-6"><label class="form-label">{{ T|tr:"preg.age" }}</label>{{ form.parent_age }}</div>
+    <div class="col-md-6"><label class="form-label">{{ T|tr:"preg.work" }}</label>{{ form.parent_workplace }}</div>
+    <div class="col-md-6"><label class="form-label">{{ T|tr:"preg.child_name" }}</label>{{ form.child_first_name }}</div>
+    <div class="col-md-6"><label class="form-label">{{ T|tr:"preg.child_lname" }}</label>{{ form.child_last_name }}</div>
+    <div class="col-12"><label class="form-label">{{ T|tr:"preg.email" }}</label>{{ form.parent_email }}
+      {% if form.parent_email.errors %}<small class="text-danger fw-bold">{{ form.parent_email.errors.0 }}</small>{% endif %}
+    </div>
+  </div>
+  <button class="btn-ms mt-4"><i class="bi bi-shield-check"></i> {{ T|tr:"preg.submit" }}</button>
+</form>
+{% endblock %}

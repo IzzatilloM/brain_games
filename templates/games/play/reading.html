@@ -1,0 +1,17 @@
+{% extends "games/play/_base_game.html" %}
+{% load static %}
+
+{% block rules %}
+<li>📖 <b>Maqsad:</b> tez yonib o'chgan so'zni eslab qoling</li>
+<li>⚡ <b>Ko'nikma:</b> ko'z harakati va tez idrok (tez o'qish)</li>
+<li>📈 <b>Adaptiv:</b> daraja oshgani sari so'z tezroq o'chadi</li>
+<li>🎯 <b>Tanlang:</b> so'ngra ko'rgan so'zingizni belgilang</li>
+{% endblock %}
+
+{% block play_area %}
+<div class="prompt-sub" id="readLabel">Diqqat bilan qarang...</div>
+<div class="reader" id="readerWord">👁</div>
+<div class="options hidden" id="readOptions"></div>
+{% endblock %}
+
+{% block game_js %}<script src="{% static 'js/games/reading.js' %}"></script>{% endblock %}

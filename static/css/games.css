@@ -1,0 +1,186 @@
+/* ============================================================
+   O'yinlar — ro'yxat kartalari va o'ynash interfeysi
+   ============================================================ */
+
+/* --- O'yinlar ro'yxati --- */
+.games-head { padding: 2.5rem 0 1.5rem; }
+.games-head h1 { font-size: clamp(1.9rem, 4vw, 2.8rem); }
+.games-head p { color: var(--muted); margin-top: 0.5rem; }
+
+.games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.4rem; padding-bottom: 3rem; }
+.game-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  padding: 1.6rem;
+  border: 1px solid var(--border);
+  background: linear-gradient(160deg, var(--surface-2), var(--surface));
+  transition: transform 0.2s, box-shadow 0.25s, border-color 0.25s;
+  display: flex; flex-direction: column;
+}
+.game-card::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(360px 200px at 100% 0%, var(--c1, var(--primary)), transparent 70%);
+  opacity: 0.16;
+  transition: opacity 0.3s;
+}
+.game-card:hover { transform: translateY(-6px); border-color: var(--border-strong); box-shadow: 0 30px 60px -28px rgba(0,0,0,0.8); }
+.game-card:hover::before { opacity: 0.28; }
+.game-card .g-top { display: flex; align-items: flex-start; justify-content: space-between; position: relative; }
+.game-card .g-ico {
+  width: 62px; height: 62px; border-radius: 18px;
+  display: grid; place-items: center; font-size: 1.9rem;
+  background: linear-gradient(140deg, var(--c1, var(--primary)), var(--c2, var(--primary-2)));
+  box-shadow: 0 14px 30px -12px var(--c1, var(--primary));
+}
+.game-card .skill-tag { font-size: 0.72rem; font-weight: 700; color: var(--muted); background: var(--surface); border: 1px solid var(--border); padding: 0.3rem 0.7rem; border-radius: 999px; }
+.game-card h3 { font-size: 1.3rem; margin: 1rem 0 0.4rem; position: relative; }
+.game-card .g-desc { color: var(--muted); font-size: 0.92rem; flex: 1; position: relative; }
+.game-card .g-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 1.3rem; position: relative; }
+.game-card .g-meta { font-size: 0.8rem; color: var(--muted); display: flex; gap: 0.9rem; }
+.game-card .g-meta b { color: var(--text); }
+.game-card .play-btn {
+  width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.1rem;
+  background: var(--grad-primary); color: #04121a;
+  transition: transform 0.2s;
+}
+.game-card:hover .play-btn { transform: scale(1.1) rotate(8deg); }
+.locked-tag { position: absolute; top: 1rem; right: 1rem; font-size: 0.72rem; background: rgba(255,91,110,0.14); color: #ffb3bd; padding: 0.25rem 0.6rem; border-radius: 999px; font-weight: 700; z-index: 2; }
+
+/* --- O'ynash sahifasi (umumiy ramka) --- */
+.play-wrap { max-width: 760px; margin: 0 auto; padding: 1.5rem 0 4rem; }
+.play-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; gap: 1rem; }
+.play-top .back { color: var(--muted); font-weight: 600; }
+.play-top .back:hover { color: var(--text); }
+.play-title { display: flex; align-items: center; gap: 0.7rem; }
+.play-title .ico { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; font-size: 1.4rem; background: linear-gradient(140deg, var(--c1), var(--c2)); }
+.play-title h1 { font-size: 1.3rem; }
+
+/* HUD: ball, vaqt, daraja, jon */
+.hud { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 1.3rem; }
+.hud .cell { text-align: center; padding: 0.85rem 0.5rem; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); }
+.hud .cell .v { font-family: var(--font-head); font-size: 1.5rem; font-weight: 800; line-height: 1; }
+.hud .cell .k { font-size: 0.72rem; color: var(--muted); margin-top: 0.25rem; }
+.hud .cell.diff .v { color: var(--accent); }
+.hud .lives { font-size: 1.2rem; letter-spacing: 2px; }
+
+.adaptive-bar {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.6rem 1rem; border-radius: 12px;
+  background: rgba(22,196,176,0.08); border: 1px solid rgba(22,196,176,0.25);
+  font-size: 0.86rem; color: var(--muted); margin-bottom: 1.2rem;
+}
+.adaptive-bar.up { background: rgba(54,211,153,0.1); border-color: rgba(54,211,153,0.3); color: #b6f0d8; }
+.adaptive-bar.down { background: rgba(246,183,60,0.1); border-color: rgba(246,183,60,0.3); color: #ffe2ad; }
+.adaptive-bar .icon { font-size: 1.1rem; }
+
+/* O'yin sahnasi */
+.stage {
+  position: relative;
+  min-height: 320px;
+  border-radius: var(--radius-lg);
+  padding: 2.2rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  background: linear-gradient(160deg, #101840, #0b1130);
+  border: 1px solid var(--border);
+}
+.timer-ring { position: absolute; top: 1.2rem; right: 1.2rem; width: 54px; height: 54px; }
+.timer-ring svg { transform: rotate(-90deg); }
+.timer-ring .track { stroke: var(--surface-2); }
+.timer-ring .bar { stroke: var(--primary); stroke-linecap: round; transition: stroke-dashoffset 0.3s linear; }
+.timer-ring .t { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 1rem; }
+
+.flash-num { font-family: var(--font-head); font-size: clamp(3.4rem, 12vw, 6rem); font-weight: 800; animation: pop 0.3s ease; }
+.question { font-family: var(--font-head); font-size: clamp(2rem, 7vw, 3.4rem); font-weight: 800; letter-spacing: 0.02em; }
+.prompt-sub { color: var(--muted); margin-top: 0.4rem; }
+
+.answer-row { display: flex; gap: 0.7rem; margin-top: 1.6rem; width: min(360px, 100%); }
+.answer-input {
+  flex: 1; text-align: center;
+  font-family: var(--font-head); font-size: 1.6rem; font-weight: 800;
+  padding: 0.7rem; border-radius: 14px;
+  background: rgba(255,255,255,0.05); border: 2px solid var(--border-strong); color: var(--text);
+}
+.answer-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(22,196,176,0.15); }
+
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; width: min(420px, 100%); margin-top: 1.6rem; }
+.opt-btn {
+  padding: 1rem; border-radius: 14px; font: inherit; font-size: 1.3rem; font-weight: 800;
+  background: var(--surface); border: 1.5px solid var(--border-strong); color: var(--text); cursor: pointer;
+  font-family: var(--font-head);
+  transition: transform 0.12s, background 0.2s, border-color 0.2s;
+}
+.opt-btn:hover { transform: translateY(-2px); border-color: var(--primary); }
+.opt-btn.correct { background: rgba(54,211,153,0.22); border-color: var(--green); }
+.opt-btn.wrong { background: rgba(255,91,110,0.2); border-color: var(--red); }
+
+.feedback { margin-top: 1rem; font-weight: 800; font-size: 1.1rem; height: 1.5rem; }
+.feedback.ok { color: var(--green); } .feedback.no { color: var(--red); }
+
+.hint-box { margin-top: 1rem; padding: 0.8rem 1.1rem; border-radius: 12px; background: rgba(246,183,60,0.1); border: 1px solid rgba(246,183,60,0.3); color: #ffe2ad; font-size: 0.9rem; }
+
+/* Boshlash / yakuniy ekran */
+.intro { text-align: center; }
+.intro .big-ico { font-size: 4rem; animation: float 4s ease-in-out infinite; }
+.intro h2 { font-size: 1.8rem; margin: 0.6rem 0; }
+.intro p { color: var(--muted); max-width: 460px; margin: 0 auto 1.4rem; }
+.intro .rules { display: grid; gap: 0.5rem; text-align: left; max-width: 420px; margin: 0 auto 1.6rem; }
+.intro .rules li { list-style: none; display: flex; gap: 0.6rem; color: var(--muted); }
+.intro .rules li b { color: var(--text); }
+
+.result-screen { text-align: center; animation: pop 0.5s ease; }
+.result-screen .trophy { font-size: 4.5rem; }
+.result-screen h2 { font-size: 2rem; margin: 0.4rem 0; }
+.result-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.9rem; margin: 1.6rem 0; }
+.result-stats .r { padding: 1.1rem 0.5rem; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); }
+.result-stats .r .v { font-family: var(--font-head); font-size: 1.7rem; font-weight: 800; }
+.result-stats .r .k { font-size: 0.78rem; color: var(--muted); }
+.coins-pop { font-size: 1.4rem; font-weight: 800; color: var(--accent); margin-bottom: 1rem; }
+
+.earned-badges { display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; margin: 1rem 0; }
+.earned-badge { padding: 0.6rem 0.9rem; border-radius: 12px; background: rgba(246,183,60,0.12); border: 1px solid rgba(246,183,60,0.3); font-weight: 700; font-size: 0.85rem; animation: pop 0.5s ease both; }
+
+/* --- Abakus (soroban) --- */
+.abacus { display: flex; gap: 0.5rem; justify-content: center; padding: 1rem; user-select: none; }
+.aba-col { display: flex; flex-direction: column; align-items: center; }
+.aba-frame { position: relative; width: 46px; }
+.aba-rod { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; transform: translateX(-50%); background: rgba(255,255,255,0.12); border-radius: 2px; }
+.aba-heaven { height: 70px; position: relative; border-bottom: 3px solid var(--accent); }
+.aba-earth { height: 200px; position: relative; }
+.bead {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  width: 40px; height: 26px; border-radius: 50%;
+  background: linear-gradient(160deg, #2b8af0, #16407a);
+  border: 1px solid rgba(255,255,255,0.2);
+  cursor: pointer; transition: top 0.18s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+.bead.active { background: linear-gradient(160deg, var(--accent), #c8841a); }
+.aba-val { margin-top: 0.5rem; font-family: var(--font-head); font-weight: 800; font-size: 1.2rem; color: var(--accent); }
+
+/* --- Tez o'qish --- */
+.reader { font-family: var(--font-head); font-size: clamp(1.8rem,6vw,3rem); font-weight: 800; min-height: 4rem; }
+.reader-passage { font-size: 1.15rem; line-height: 1.9; color: var(--text); text-align: left; max-width: 560px; }
+.wpm-tag { color: var(--accent); font-weight: 800; }
+
+/* --- Xotira (flashcards) --- */
+.memo-grid { display: grid; gap: 0.7rem; justify-content: center; }
+.memo-cell {
+  width: 70px; height: 70px; border-radius: 14px;
+  display: grid; place-items: center;
+  font-family: var(--font-head); font-size: 1.6rem; font-weight: 800;
+  background: var(--surface-2); border: 1.5px solid var(--border-strong);
+  cursor: pointer; transition: all 0.2s;
+}
+.memo-cell.show { background: var(--grad-primary); color: #04121a; }
+.memo-cell.picked { border-color: var(--primary); }
+.memo-cell.good { background: rgba(54,211,153,0.25); border-color: var(--green); }
+.memo-cell.bad { background: rgba(255,91,110,0.22); border-color: var(--red); }
+
+@media (max-width: 560px) {
+  .hud { grid-template-columns: repeat(2,1fr); }
+  .result-stats { grid-template-columns: 1fr; }
+}

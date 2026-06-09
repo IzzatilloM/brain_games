@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mening kabinetim — {{ SITE_NAME }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">{% endblock %}
+
+{% block content %}
+<section class="dash">
+  <div class="container">
+
+    <!-- HERO + STATS -->
+    <div class="dash__hero">
+      <div class="hero-card">
+        <span class="face-xl">{{ user.avatar }}</span>
+        <div class="greet">Salom 👋</div>
+        <h1>{{ user.full_name|default:user.username }}</h1>
+        <span class="pill"><span class="dot"></span> {{ user.level }}-daraja · {{ user.get_role_display }}</span>
+        <div class="level-row">
+          <div class="level-badge">{{ user.level }}</div>
+          <div class="meta">
+            <div class="lbl"><span>Keyingi darajagacha</span><span>{{ user.level_progress }}%</span></div>
+            <div class="progressbar"><span style="width:{{ user.level_progress }}%"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="ico t2">🪙</div><div class="num">{{ user.coins }}</div><div class="cap">Tangalar</div></div>
+        <div class="stat"><div class="ico t1">🔥</div><div class="num">{{ user.streak_days }}</div><div class="cap">Ketma-ket kun</div></div>
+        <div class="stat"><div class="ico t3">🎯</div><div class="num">{{ accuracy }}%</div><div class="cap">O'rtacha aniqlik</div></div>
+        <div class="stat"><div class="ico t4">🎮</div><div class="num">{{ plays }}</div><div class="cap">O'ynalgan</div></div>
+      </div>
+    </div>
+
+    {% if controls and time_left is not None %}
+    <div class="adaptive-bar {% if time_left <= 0 %}down{% endif %}" style="margin-bottom:1.6rem">
+      <span class="icon">⏰</span>
+      {% if time_left > 0 %}Bugun yana <b>{{ time_left }}</b> daqiqa o'ynashingiz mumkin.{% else %}Bugungi o'yin vaqti tugadi. Ertaga davom etamiz! 🌙{% endif %}
+    </div>
+    {% endif %}
+
+    <!-- MAIN GRID -->
+    <div class="dash-grid">
+      <div style="display:grid;gap:1.3rem">
+        <!-- O'yinlar progressi -->
+        <div class="panel glass">
+          <div class="panel__head"><h3>O'yinlar bo'yicha progress</h3><a href="{% url 'games:list' %}" class="btn btn--ghost btn--sm">Barchasi →</a></div>
+          {% for p in progress_list %}
+          <div class="prog-row">
+            <div class="g-ico" style="background:linear-gradient(140deg,{{ p.game.color }},{{ p.game.color_2 }})">{{ p.game.icon }}</div>
+            <div class="g-body">
+              <div class="flex justify-between items-center">
+                <div><div class="g-name">{{ p.game.title }}</div><div class="g-sub">{{ p.total_sessions }} sessiya · {{ p.accuracy }}% aniqlik</div></div>
+                <span class="lvl-tag">{{ p.difficulty }}-daraja</span>
+              </div>
+              <div class="progressbar mt-1"><span style="width:{{ p.accuracy }}%"></span></div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty"><div class="e">🎮</div><p>Hali o'ynamagansiz. Birinchi o'yiningizni boshlang!</p><a href="{% url 'games:list' %}" class="btn mt-2">O'ynashni boshlash</a></div>
+          {% endfor %}
+        </div>
+
+        <!-- Haftalik faollik -->
+        <div class="panel glass">
+          <div class="panel__head"><h3>Haftalik faollik (daqiqa)</h3></div>
+          <div class="chart" id="weekChart"
+               data-labels="{{ chart_labels|join:',' }}"
+               data-values="{{ chart_minutes|join:',' }}"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;gap:1.3rem">
+        <!-- Tezkor o'ynash -->
+        <div class="panel glass" style="text-align:center">
+          <h3 style="margin-bottom:.4rem">O'ynashga tayyormisiz?</h3>
+          <p class="text-muted" style="font-size:.9rem;margin-bottom:1rem">Aqlingizni charxlash vaqti keldi!</p>
+          <a href="{% url 'games:list' %}" class="btn btn--block btn--lg">O'yinni tanlash 🚀</a>
+        </div>
+
+        <!-- Yutuqlar -->
+        <div class="panel glass">
+          <div class="panel__head"><h3>Yutuqlar</h3><span class="pill">{{ achievements|length }}</span></div>
+          {% if achievements %}
+          <div class="badges-grid">
+            {% for ua in achievements %}
+            <div class="badge-tile" title="{{ ua.achievement.description }}">
+              <div class="e">{{ ua.achievement.icon }}</div>
+              <div class="t">{{ ua.achievement.title }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty"><div class="e">🏅</div><p style="font-size:.9rem">Hali yutuq yo'q. O'ynab nishonlarni oching!</p></div>
+          {% endif %}
+        </div>
+
+        <!-- So'nggi sessiyalar -->
+        <div class="panel glass">
+          <div class="panel__head"><h3>So'nggi o'yinlar</h3></div>
+          {% for s in sessions %}
+          <div class="sess">
+            <div class="s-ico" style="background:linear-gradient(140deg,{{ s.game.color }},{{ s.game.color_2 }})">{{ s.game.icon }}</div>
+            <div><div style="font-weight:600">{{ s.game.short_title|default:s.game.title }}</div><div class="text-muted" style="font-size:.78rem">{{ s.created_at|date:"d-M, H:i" }} · {{ s.score }} ball</div></div>
+            <span class="s-acc {% if s.accuracy >= 80 %}acc-good{% elif s.accuracy >= 50 %}acc-mid{% else %}acc-low{% endif %}">{{ s.accuracy }}%</span>
+          </div>
+          {% empty %}
+          <p class="text-muted" style="font-size:.9rem;text-align:center;padding:1rem">Hali o'yin yo'q.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/dashboard.js' %}"></script>{% endblock %}

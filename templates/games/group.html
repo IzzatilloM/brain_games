@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_games %}active{% endblock %}
+{% block title %}{{ category.name }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <div class="ms-page-head mb-0">
+    <a class="back" href="{% url 'games:list' %}"><i class="bi bi-arrow-left"></i></a>
+    <h1>{{ category.icon }} {{ category.name }}</h1>
+  </div>
+  <a class="btn-ms" href="{% url 'core:multiplayer' %}"><i class="bi bi-globe-americas"></i> {{ T|tr:"nav.multiplayer" }}</a>
+</div>
+
+<div class="ms-grid" style="grid-template-columns:repeat(auto-fill,minmax(190px,1fr))">
+  {% for g in category.games %}
+  <a class="ms-game-card" href="{% url 'games:play' g.slug %}">
+    <div class="ms-tile {% if g.symbol %}symbol{% endif %}" style="--c:{{ category.color }}">
+      {% if g.symbol %}{{ g.symbol }}{% else %}{{ g.icon }}{% endif %}
+    </div>
+    <h3>{{ g.name }}</h3>
+    <div class="meta">{{ g.tagline }}</div>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_profile %}active{% endblock %}
+{% block title %}{{ T|tr:"nav.profile" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="ms-hero d-flex align-items-center gap-3 mb-4" style="padding:24px 28px">
+  <div style="width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:46px;flex:0 0 auto">{{ user.avatar }}</div>
+  <div style="flex:1;min-width:0;color:#fff">
+    <h1 style="margin:0">{{ user.display_name }}</h1>
+    <div class="fw-bold" style="opacity:.92">@{{ user.username }} · {{ user.age_group }} {{ T|tr:"common.year" }} · {{ user.level }}-{{ T|tr:"common.level" }}</div>
+    <div style="height:9px;background:rgba(255,255,255,.3);border-radius:9px;overflow:hidden;margin-top:10px;max-width:340px">
+      <div style="height:100%;width:{{ user.xp_in_level }}%;background:#fff"></div>
+    </div>
+    <div class="fw-bold mt-1" style="opacity:.9;font-size:13px">{{ T|tr:"home.next_level" }} {{ user.xp_to_next }} XP</div>
+  </div>
+</div>
+
+<div class="ms-stats">
+  <div class="ms-stat"><div class="v">{{ user.xp }}</div><div class="l">⚡ XP</div></div>
+  <div class="ms-stat"><div class="v">{{ user.coins }}</div><div class="l">🪙 {{ T|tr:"common.coin" }}</div></div>
+  <div class="ms-stat"><div class="v">{{ user.stars }}</div><div class="l">⭐ {{ T|tr:"common.star" }}</div></div>
+  <div class="ms-stat"><div class="v">{{ user.streak_days }}</div><div class="l">🔥 Streak</div></div>
+</div>
+
+{% if user.achievements.all %}
+<div class="ms-page-head mt-4"><h1 style="font-size:22px">🎖️ {{ T|tr:"profile.achievements" }}</h1></div>
+<div class="ms-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">
+  {% for ua in user.achievements.all %}
+  <div class="ms-stat" style="background:var(--card);border:1px solid var(--line)">
+    <div style="font-size:38px">{{ ua.achievement.icon }}</div>
+    <h3 style="font-size:15px;margin:6px 0 2px">{{ ua.achievement.title }}</h3>
+    <div class="text-muted fw-bold" style="font-size:12px">{{ ua.achievement.description }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="ms-page-head mt-4"><h1 style="font-size:22px">⚙️ {{ T|tr:"profile.settings" }}</h1></div>
+<form method="post" id="profileForm" style="max-width:560px">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label class="form-label">{{ T|tr:"profile.name" }}</label>
+    {{ form.full_name }}
+  </div>
+  <div class="mb-3">
+    <label class="form-label">{{ T|tr:"profile.age_group" }}</label>
+    {{ form.age_group }}
+  </div>
+  <div class="mb-3">
+    <label class="form-label">{{ T|tr:"profile.avatar" }}</label>
+    <div class="chooser" id="avatarChooser">
+      {% for a in avatars %}<div class="chip av" data-val="{{ a }}">{{ a }}</div>{% endfor %}
+    </div>
+    {{ form.avatar }}
+  </div>
+  <div class="form-check form-switch mb-3">
+    {{ form.sound_enabled }}
+    <label class="form-check-label fw-bold" for="{{ form.sound_enabled.id_for_label }}">🔊 {{ T|tr:"profile.sound" }}</label>
+  </div>
+  <button class="btn-ms">{{ T|tr:"common.save" }}</button>
+</form>
+
+<script>
+  (function(){
+    var chooser=document.getElementById('avatarChooser');
+    var input=document.querySelector('[name="avatar"]');
+    var chips=chooser.querySelectorAll('.chip');
+    chips.forEach(function(c){
+      if(c.dataset.val===input.value) c.classList.add('on');
+      c.addEventListener('click',function(){chips.forEach(x=>x.classList.remove('on'));c.classList.add('on');input.value=c.dataset.val;});
+    });
+  })();
+</script>
+{% endblock %}

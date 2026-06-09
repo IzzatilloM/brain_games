@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_help %}active{% endblock %}
+{% block title %}{{ T|tr:"nav.help" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="ms-page-head"><h1>🛟 {{ T|tr:"help.title" }}</h1></div>
+<p class="text-muted fw-bold">Eng ko'p so'raladigan savollar va platformadan foydalanish bo'yicha qo'llanma.</p>
+
+<div class="ms-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+  {% for f in faqs %}
+  <div class="ms-stat text-start" style="background:var(--card);border:1px solid var(--line);padding:20px">
+    <div style="font-size:34px">{{ f.icon }}</div>
+    <h3 style="font-size:17px;margin:8px 0 6px">{{ f.q }}</h3>
+    <p class="text-muted fw-bold mb-0" style="font-size:14px">{{ f.a }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

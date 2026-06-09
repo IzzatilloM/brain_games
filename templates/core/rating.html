@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load i18n_tags %}
+{% block nav_rating %}active{% endblock %}
+{% block title %}{{ T|tr:"rating.title" }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="rt-top mb-3">
+  <h1 style="font-size:30px;margin:0">{{ T|tr:"rating.title" }}</h1>
+  <div class="rt-tabs">
+    <button class="rt-tab" data-tab>{{ T|tr:"rating.by_week" }}</button>
+    <button class="rt-tab on" data-tab>{{ T|tr:"rating.by_month" }}</button>
+    <span class="rt-month"><small class="text-muted d-block">{{ T|tr:"rating.month" }}</small><b><i class="bi bi-calendar3"></i> {{ cur_month }}</b></span>
+  </div>
+</div>
+
+<div class="rt-filters">
+  <div class="rt-search"><i class="bi bi-search"></i><input class="form-control" id="rtSearch" placeholder="{{ T|tr:'rating.search' }}"></div>
+  <div><label class="rt-lab">{{ T|tr:"rating.filter_rating" }}</label><select class="form-select"><option>{{ T|tr:"rating.students" }}</option><option>{{ T|tr:"rating.teachers" }}</option></select></div>
+  <div><label class="rt-lab">{{ T|tr:"rating.module" }}</label><select class="form-select"><option>{{ T|tr:"rating.all" }}</option><option>{{ T|tr:"rating.mental" }}</option><option>{{ T|tr:"rating.math" }}</option></select></div>
+  <div><label class="rt-lab">{{ T|tr:"rating.difficulty" }}</label><select class="form-select"><option>-</option><option>{{ T|tr:"rating.easy" }}</option><option>{{ T|tr:"rating.hard" }}</option></select></div>
+  <div><label class="rt-lab">{{ T|tr:"rating.geography" }}</label><select class="form-select"><option>{{ T|tr:"rating.at_school" }}</option><option>{{ T|tr:"rating.in_city" }}</option><option>{{ T|tr:"rating.in_republic" }}</option></select></div>
+  <div><label class="rt-lab">{{ T|tr:"rating.scoring" }}</label><select class="form-select"><option>{{ T|tr:"rating.simple" }}</option><option>{{ T|tr:"rating.complex" }}</option></select></div>
+  <button class="rt-refresh"><i class="bi bi-arrow-repeat"></i></button>
+</div>
+
+<div class="fw-bold mb-2 mt-3">{{ T|tr:"rating.participants" }}: {{ total }}</div>
+
+<div class="rt-table">
+  <div class="rt-head"><span class="c-rank">#</span><span class="c-who">{{ T|tr:"rating.player" }}</span><span class="c-score">{{ T|tr:"rating.score_col" }}</span></div>
+  {% for r in rows %}
+  <div class="rt-row {% if r.is_me %}me{% endif %}" data-name="{{ r.name|lower }} {{ r.city|lower }}">
+    <span class="c-rank">{% if r.rank == 1 %}🥇{% elif r.rank == 2 %}🥈{% elif r.rank == 3 %}🥉{% else %}{{ r.rank }}{% endif %}</span>
+    <span class="c-who">
+      <span class="rt-ava">{{ r.avatar }}</span>
+      <span><b>{{ r.name }}</b><br><small class="text-muted">{{ T|tr:"rating.city" }}: {{ r.city }} · {{ r.level }}-{{ T|tr:"common.level" }} · ⭐ {{ r.stars }}</small></span>
+    </span>
+    <span class="c-score">{{ r.xp }}</span>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+  (function(){
+    var inp=document.getElementById('rtSearch');
+    var rows=Array.prototype.slice.call(document.querySelectorAll('.rt-row'));
+    if(inp){ inp.addEventListener('input',function(){
+      var q=inp.value.trim().toLowerCase();
+      rows.forEach(function(r){ r.style.display = (r.dataset.name||'').indexOf(q)>=0 ? '' : 'none'; });
+    }); }
+    document.querySelectorAll('[data-tab]').forEach(function(b){
+      b.addEventListener('click',function(){ document.querySelectorAll('[data-tab]').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); });
+    });
+  })();
+</script>
+{% endblock %}

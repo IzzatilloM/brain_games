@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ game.title }} — {{ SITE_NAME }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/games.css' %}">{% endblock %}
+
+{% block content %}
+<section class="container">
+  <div class="play-wrap"
+       id="gameRoot"
+       data-slug="{{ game.slug }}"
+       data-submit-url="{% url 'games:submit' game.slug %}"
+       data-start-diff="{{ start_difficulty }}"
+       data-max-diff="{{ max_difficulty }}">
+    {% csrf_token %}
+
+    <div class="play-top">
+      <a href="{% url 'games:list' %}" class="back">← O'yinlar</a>
+      <div class="play-title">
+        <span class="ico" style="--c1:{{ game.color }};--c2:{{ game.color_2 }}">{{ game.icon }}</span>
+        <h1>{{ game.title }}</h1>
+      </div>
+      <span class="pill"><span class="dot"></span> 🪙 {{ user.coins }}</span>
+    </div>
+
+    {% if not access.allowed %}
+    <!-- Ota-ona nazorati: ruxsat yo'q -->
+    <div class="stage">
+      <div class="intro">
+        <div class="big-ico">🔒</div>
+        <h2>O'yin hozircha mavjud emas</h2>
+        <p>{{ access.reason }}</p>
+        <a href="{% url 'dashboard:home' %}" class="btn">Kabinetga qaytish</a>
+      </div>
+    </div>
+    {% else %}
+
+    <!-- HUD -->
+    <div class="hud">
+      <div class="cell"><div class="v" id="hudScore">0</div><div class="k">Ball</div></div>
+      <div class="cell"><div class="v" id="hudQ">0/0</div><div class="k">Savol</div></div>
+      <div class="cell diff"><div class="v" id="hudDiff">{{ start_difficulty }}</div><div class="k">Daraja</div></div>
+      <div class="cell"><div class="v lives" id="hudLives">❤️❤️❤️</div><div class="k">Jon</div></div>
+    </div>
+
+    <div class="adaptive-bar hidden" id="adaptiveBar"><span class="icon">🎯</span> <span id="adaptiveMsg"></span></div>
+
+    <!-- Sahna -->
+    <div class="stage" id="stage">
+      <!-- Boshlash ekrani -->
+      <div class="intro" id="introScreen">
+        <div class="big-ico">{{ game.icon }}</div>
+        <h2>{{ game.title }}</h2>
+        <p>{{ game.description|default:game.tagline }}</p>
+        <ul class="rules">
+          {% block rules %}
+          <li>🎯 <b>Maqsad:</b> savollarga to'g'ri javob bering</li>
+          <li>📈 <b>Adaptiv:</b> 3 ta ketma-ket to'g'ri javobdan keyin daraja oshadi</li>
+          <li>❤️ <b>Jonlar:</b> 3 ta xatodan keyin o'yin tugaydi</li>
+          {% endblock %}
+        </ul>
+        <button class="btn btn--lg" id="startBtn">Boshlash 🚀</button>
+      </div>
+
+      <!-- O'yin ekrani -->
+      <div class="hidden" id="playScreen" style="width:100%;display:flex;flex-direction:column;align-items:center">
+        <div class="timer-ring hidden" id="timerRing">
+          <svg width="54" height="54"><circle class="track" cx="27" cy="27" r="23" fill="none" stroke-width="5"/><circle class="bar" id="timerBar" cx="27" cy="27" r="23" fill="none" stroke-width="5" stroke-dasharray="144.5" stroke-dashoffset="0"/></svg>
+          <div class="t" id="timerText">5</div>
+        </div>
+        <div id="gameArea" style="width:100%;display:flex;flex-direction:column;align-items:center">
+          {% block play_area %}
+          <div class="question" id="qPrompt">—</div>
+          <div class="answer-row">
+            <input type="text" inputmode="numeric" class="answer-input" id="answerInput" autocomplete="off" placeholder="?">
+            <button class="btn" id="submitAnswer">→</button>
+          </div>
+          {% endblock %}
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <div class="hint-box hidden" id="hintBox"></div>
+      </div>
+
+      <!-- Natija ekrani -->
+      <div class="hidden result-screen" id="resultScreen" style="width:100%">
+        <div class="trophy" id="resultTrophy">🏆</div>
+        <h2 id="resultTitle">Ajoyib!</h2>
+        <div class="coins-pop" id="resultCoins">+0 🪙</div>
+        <div class="result-stats">
+          <div class="r"><div class="v" id="rScore">0</div><div class="k">Ball</div></div>
+          <div class="r"><div class="v" id="rAcc">0%</div><div class="k">Aniqlik</div></div>
+          <div class="r"><div class="v" id="rDiff">1</div><div class="k">Daraja</div></div>
+        </div>
+        <div class="earned-badges hidden" id="earnedBadges"></div>
+        <div class="flex gap" style="justify-content:center;flex-wrap:wrap">
+          <button class="btn" id="replayBtn">Yana o'ynash 🔁</button>
+          <a href="{% url 'games:list' %}" class="btn btn--ghost">Boshqa o'yin</a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/adaptive.js' %}"></script>
+<script src="{% static 'js/game-core.js' %}"></script>
+{% block game_js %}{% endblock %}
+{% endblock %}

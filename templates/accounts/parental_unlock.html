@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block nav_parental %}active{% endblock %}
+{% block title %}Ota-ona nazorati — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height:50vh">
+  <div style="font-size:70px">🔒</div>
+  <h1>Ota-ona nazorati</h1>
+  <p class="text-muted fw-bold" style="max-width:420px">Bu bo'lim ota-onalar uchun. Davom etish uchun PIN kodni kiriting.
+    <br>(Standart PIN: <b>0000</b>)</p>
+  <form method="post" style="max-width:280px;width:100%">
+    {% csrf_token %}
+    <div class="mb-3">{{ form.pin }}
+      {% if form.pin.errors %}<small class="text-danger fw-bold">{{ form.pin.errors.0 }}</small>{% endif %}
+    </div>
+    <button class="btn-ms w-100" style="justify-content:center">Kirish</button>
+  </form>
+</div>
+{% endblock %}
